@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f7f3">
+  <meta name="description" content="帧间：在 iPhone 和 iPad 上拼接照片与 Live Photo，拆图、转换视频和 GIF、串接实况照片、添加水印。">
+  <title>帧间 — 让每一帧，拼出新故事</title>
+  <style>
+    :root { color-scheme: light; --ink:#172723; --muted:#60706a; --paper:#f8f7f3; --green:#234e42; --lime:#dcf18d; --line:#dce3db; --serif:Georgia,"Songti SC","STSong",serif; --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; }
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; }
+    .en, html[data-lang="en"] .zh { display:none; }
+    html[data-lang="en"] .en { display:revert; }
+    .wrap { width:min(1200px,calc(100% - 64px)); margin-inline:auto; }
+    .skip { position:absolute; left:16px; top:-100px; z-index:30; background:white; padding:10px 16px; border-radius:10px; }
+    .skip:focus { top:12px; }
+    :focus-visible { outline:3px solid #d77d4b; outline-offset:4px; }
+    header { position:relative; z-index:5; border-bottom:1px solid rgba(35,78,66,.11); }
+    .nav { min-height:82px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+    .brand { display:inline-flex; align-items:center; gap:12px; font-weight:750; letter-spacing:-.035em; font-size:21px; white-space:nowrap; }
+    .brand-mark { width:38px; height:38px; display:grid; grid-template-columns:repeat(2,1fr); gap:3px; padding:6px; border-radius:12px; background:var(--green); transform:rotate(-8deg); box-shadow:0 7px 14px #234e4229; }
+    .brand-mark i { display:block; background:#dff19a; border-radius:2px; }
+    .brand-mark i:nth-child(2) { background:#f0af79; }.brand-mark i:nth-child(3) { background:#a9d0c1; }.brand-mark i:nth-child(4) { background:#f5e9cb; }
+    .nav-links { display:flex; align-items:center; gap:29px; font-size:13px; font-weight:600; }
+    .nav-links a { color:#4d5e56; transition:color .2s; }.nav-links a:hover { color:var(--green); }
+    .lang-switch { display:flex; align-items:center; border:1px solid #cdd7ce; border-radius:100px; padding:3px; white-space:nowrap; background:#fff9; }
+    .lang-switch button { border:0; background:transparent; color:#6b7770; padding:7px 10px; border-radius:100px; font-size:12px; font-weight:700; cursor:pointer; }
+    .lang-switch button[aria-pressed="true"] { color:white; background:var(--green); }
+    .hero { position:relative; overflow:hidden; padding:110px 0 115px; }
+    .hero::before { content:""; position:absolute; width:680px; height:680px; right:-270px; top:-420px; background:#e2eede; border-radius:50%; filter:blur(40px); }
+    .hero-grid { position:relative; display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:70px; }
+    .eyebrow { display:inline-flex; gap:9px; align-items:center; color:var(--green); font-size:12px; font-weight:750; letter-spacing:.08em; text-transform:uppercase; }
+    .eyebrow::before { content:""; width:8px; height:8px; border-radius:50%; background:#e6986b; box-shadow:0 0 0 5px #e6986b26; }
+    h1,h2,h3,p { margin-top:0; }
+    h1 { margin:25px 0 24px; font-size:clamp(50px,5.3vw,83px); line-height:1.17; letter-spacing:-.075em; font-weight:750; }
+    h1 em { font-style:normal; color:#638268; }
+    .lead { max-width:510px; color:#617168; font-size:17px; line-height:1.95; }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin:34px 0 37px; }
+    .button { display:inline-flex; align-items:center; justify-content:center; gap:15px; min-height:51px; padding:0 23px; font-size:14px; font-weight:750; border-radius:14px; transition:transform .2s,box-shadow .2s; }
+    .button:hover { transform:translateY(-3px); box-shadow:0 12px 22px #234e4220; }
+    .button-primary { color:white; background:var(--green); }.button-light { border:1px solid #cad6cd; background:white; }
+    .hero-meta { display:flex; gap:30px; flex-wrap:wrap; color:#64746b; font-size:12px; font-weight:600; }
+    .hero-meta span { display:inline-flex; align-items:center; gap:8px; }.hero-meta b { color:#dc8e5f; font-size:17px; }
+    .studio { position:relative; width:min(100%,525px); margin-left:auto; }
+    .studio::before { content:""; position:absolute; inset:38px -23px -28px 27px; background:#e7ede4; border-radius:39px; transform:rotate(7deg); }
+    .canvas { position:relative; background:#fff; border:1px solid #e1e5dc; padding:17px; border-radius:30px; box-shadow:0 34px 65px #1a3d3225,0 5px 14px #1a3d320c; }
+    .canvas-top { display:flex; align-items:center; justify-content:space-between; padding:5px 6px 17px; font-size:12px; font-weight:700; }
+    .dots { display:flex; gap:5px; }.dots i { width:7px; height:7px; border-radius:50%; background:#d7ddd4; }.dots i:first-child { background:#ecaa85; }
+    .art { height:380px; display:grid; grid-template-columns:1.15fr .85fr; grid-template-rows:1fr 1fr; gap:7px; border-radius:17px; overflow:hidden; background:#f3efdf; }
+    .scene { position:relative; overflow:hidden; isolation:isolate; }
+    .scene::before { content:""; position:absolute; width:96px; height:96px; top:18%; right:13%; border-radius:50%; background:#fff2bb; box-shadow:0 0 50px #fff2bb66; }
+    .scene::after { content:""; position:absolute; inset:45% -45% -35%; border-radius:47% 52% 0 0; transform:rotate(-13deg); background:#4d796b; box-shadow:120px 26px 0 30px #274f48; }
+    .scene.one { grid-row:span 2; background:linear-gradient(170deg,#8eb8b1 0%,#d9dbbe 58%,#eed7a9 100%); }.scene.one::before { width:135px;height:135px;top:13%;right:18%; }
+    .scene.one::after { inset:55% -24% -35%; transform:rotate(16deg); background:#658e75; box-shadow:-165px 21px 0 50px #274e47; }
+    .scene.two { background:linear-gradient(#e9bea6,#f8e6bc 62%,#dfd4aa); }.scene.two::after { background:#a87f70; box-shadow:115px 35px 0 18px #625b64; }
+    .scene.three { background:linear-gradient(#8eb2b0,#dbd7af 75%); }.scene.three::before { width:62px;height:62px;top:14%;left:16%; }.scene.three::after { background:#779188; box-shadow:-80px 8px 0 25px #476d62; }
+    .canvas-bottom { display:flex; align-items:center; justify-content:space-between; padding:16px 5px 3px; color:#718078; font-size:12px; }.canvas-bottom strong { color:var(--green); }
+    .floating { position:absolute; z-index:2; display:flex; align-items:center; gap:11px; border:1px solid #e8e4d6; background:#fffdf9; box-shadow:0 16px 32px #254a3b1c; border-radius:16px; padding:12px 16px; font-size:12px; font-weight:700; }
+    .floating b { display:grid; place-items:center; width:30px; height:30px; border-radius:10px; font-size:17px; background:var(--lime); }
+    .floating-a { top:82px; right:-47px; transform:rotate(5deg); }.floating-b { bottom:73px; left:-47px; transform:rotate(-6deg); }.floating-b b { background:#f8d3b6; }
+    .visual-note { text-align:right; color:#819086; font-size:11px; margin:15px 3px 0; }
+    .ribbon { background:var(--green); color:#e4f2df; padding:22px 0; overflow:hidden; }
+    .ribbon-inner { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; font-size:13px; font-weight:650; }
+    .ribbon-inner i { font-style:normal; color:#c5e6a0; font-size:18px; }.ribbon-inner span { display:flex; align-items:center; gap:18px; }
+    section { scroll-margin-top:32px; }
+    .section-space { padding:115px 0; }
+    .section-top { display:flex; justify-content:space-between; align-items:end; gap:30px; margin-bottom:35px; }
+    .kicker { color:#8a9b7d; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.18em; margin-bottom:16px; }
+    h2 { font-size:clamp(35px,4vw,53px); letter-spacing:-.065em; line-height:1.2; margin-bottom:0; }
+    .section-desc { color:#6b7a70; font-size:14px; line-height:1.8; max-width:320px; margin:0; }
+    .features { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; }
+    .feature { min-height:245px; padding:27px; border-radius:21px; border:1px solid #e3e8df; background:#fff; display:flex; flex-direction:column; align-items:flex-start; transition:transform .25s,box-shadow .25s; }
+    .feature:hover { transform:translateY(-5px); box-shadow:0 18px 40px #274e4210; }
+    .feature:first-child { grid-column:span 2; background:#ebf1e7; border-color:#e1ebdb; }
+    .feature:nth-child(3) { background:#f8efe6; border-color:#f5e7d9; }
+    .feature-icon { display:grid; place-items:center; width:44px; height:44px; color:var(--green); background:#e6efd9; border-radius:12px; font-size:22px; margin-bottom:auto; }
+    .feature:first-child .feature-icon { background:white; }.feature:nth-child(3) .feature-icon { background:#fff8ee; }
+    .feature h3 { font-size:21px; letter-spacing:-.045em; margin:22px 0 8px; }
+    .feature p { color:#69786e; line-height:1.75; font-size:13px; margin:0; max-width:410px; }
+    .spotlight { padding:100px 0; background:#e9ede5; overflow:hidden; }
+    .spotlight-grid { display:grid; grid-template-columns:1fr 1fr; gap:90px; align-items:center; }
+    .sample { position:relative; min-height:422px; border-radius:28px; padding:30px; background:#cfdbcb; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .sample::before { content:""; position:absolute; width:340px; height:340px; background:#f5e1bd; border-radius:50%; top:-155px; left:-90px; }
+    .sample::after { content:""; position:absolute; width:260px; height:260px; background:#aec8ba; border-radius:50%; right:-110px; bottom:-160px; }
+    .sample-grid { position:relative; z-index:1; width:min(315px,100%); aspect-ratio:1; display:grid; grid-template-columns:repeat(3,1fr); gap:5px; padding:8px; background:white; border-radius:17px; box-shadow:0 25px 45px #30544236; transform:rotate(-6deg); }
+    .sample-grid i { border-radius:4px; background:linear-gradient(155deg,#90b6b0 5%,#e0d9ad 50%,#527966 51%,#294e46); }
+    .sample-grid i:nth-child(3n + 1) { background:linear-gradient(145deg,#e8bba0,#f4dcb3 52%,#ae806f 53%,#5d5c65); }.sample-grid i:nth-child(4n) { background:linear-gradient(165deg,#85afb5,#d3dabb 45%,#71937c 46%,#3b6258); }
+    .sample-tag { position:absolute; z-index:2; bottom:20px; right:22px; background:#fff; border-radius:11px; padding:10px 14px; font-size:12px; font-weight:750; box-shadow:0 10px 22px #244b381e; }
+    .spotlight-text h2 { max-width:485px; margin-bottom:24px; }.spotlight-text > p { color:#617067; font-size:15px; line-height:1.95; max-width:450px; }
+    .inline-link { display:inline-flex; gap:10px; align-items:center; margin-top:15px; padding-bottom:5px; border-bottom:1px solid var(--green); font-size:14px; font-weight:750; color:var(--green); }
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:55px; }
+    .step { border-top:1px solid #bacbbd; padding-top:25px; }
+    .step-number { font:italic 41px var(--serif); color:#8fae92; display:block; margin-bottom:26px; }
+    .step h3 { font-size:20px; margin:0 0 12px; }.step p { max-width:315px; color:var(--muted); font-size:14px; line-height:1.8; }
+    .end { padding:95px 0; background:#213f36; color:white; text-align:center; }
+    .end .kicker { color:#b6d987; }.end h2 { max-width:750px; margin:0 auto 22px; }.end p { color:#ceded1; max-width:570px; margin:0 auto 29px; line-height:1.9; font-size:15px; }
+    .end .button { background:var(--lime); color:#234037; }
+    footer { background:#19352c; color:#aebfb4; padding:29px 0; }
+    .footer-inner { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; font-size:12px; }.footer-inner .brand { color:white; font-size:16px; }
+    @media (max-width:1020px) { .hero-grid,.spotlight-grid { gap:36px; }.floating-a { right:-12px; }.floating-b { left:-14px; }.art { height:330px; } }
+    @media (max-width:760px) { .wrap { width:min(100% - 40px,560px); }.nav { min-height:70px; }.nav-links { gap:13px; }.nav-links a { display:none; }.hero { padding:75px 0 85px; }.hero-grid,.spotlight-grid { grid-template-columns:1fr; }.hero-grid { gap:58px; }.hero h1 { max-width:550px; }.studio { width:min(100% - 25px,500px); margin:0 auto; }.floating-a { right:-16px; }.floating-b { left:-15px; }.ribbon-inner { justify-content:flex-start; column-gap:24px; }.section-space { padding:80px 0; }.section-top { display:block; }.section-desc { margin-top:18px; }.features { grid-template-columns:1fr 1fr; }.feature:first-child { grid-column:span 2; }.spotlight { padding:80px 0; }.sample { order:2; }.steps { gap:17px; } }
+    @media (max-width:540px) { .wrap { width:calc(100% - 36px); }.hero { padding:62px 0 74px; }h1 { font-size:clamp(45px,12vw,66px); }.lead { font-size:15px; }.art { height:295px; }.floating { font-size:11px; padding:8px 11px; }.floating-a { top:80px; right:-12px; }.floating-b { bottom:65px; left:-14px; }.features,.steps { grid-template-columns:1fr; }.feature,.feature:first-child { grid-column:auto; min-height:220px; }.steps { margin-top:35px; gap:8px; }.step-number { margin-bottom:12px; }.step { padding:24px 0 8px; }.sample { min-height:350px; }.ribbon-inner { font-size:11px; gap:10px 19px; }.ribbon-inner span { gap:9px; }.end { padding:77px 0; } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { transition:none!important; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main"><span class="zh">跳到正文</span><span class="en">Skip to content</span></a>
+  <header>
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a href="#top" class="brand" aria-label="帧间 Frame — home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="zh">帧间</span><span class="en">Frame</span></a>
+      <div class="nav-links"><a href="#features"><span class="zh">功能一览</span><span class="en">Features</span></a><a href="#how-it-works"><span class="zh">使用方式</span><span class="en">How it works</span></a><div class="lang-switch" role="group" aria-label="Language / 语言"><button type="button" data-switch="zh" aria-pressed="true">中</button><button type="button" data-switch="en" aria-pressed="false">EN</button></div></div>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title"><div class="hero-grid wrap">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="zh">你的随身影像创作室</span><span class="en">Your pocket photo studio</span></span>
+        <h1 id="hero-title"><span class="zh">让每一帧，<br><em>拼出新故事。</em></span><span class="en">Make every frame<br><em>part of the story.</em></span></h1>
+        <p class="lead"><span class="zh">照片不止能留在相册里。用帧间拼接画面、拆分九宫格、转换动态影像，让每一次记录都有新的表达。</span><span class="en">Your photos can be more than memories in an album. Join frames, split grids, and turn motion into something new—all in one creative space.</span></p>
+        <div class="actions"><a class="button button-primary" href="#features"><span class="zh">探索功能</span><span class="en">Explore features</span><span aria-hidden="true">↗</span></a><a class="button button-light" href="#how-it-works"><span class="zh">看看如何创作</span><span class="en">See how it works</span></a></div>
+        <div class="hero-meta"><span><b aria-hidden="true">✦</b><span class="zh">适用于 iPhone 与 iPad</span><span class="en">Made for iPhone &amp; iPad</span></span><span><b aria-hidden="true">✦</b><span class="zh">照片与 Live Photo</span><span class="en">Photos &amp; Live Photos</span></span></div>
+      </div>
+      <div class="studio" aria-label="功能视觉示意 / Concept illustration"><div class="floating floating-a"><b aria-hidden="true">▦</b><span class="zh">10 种拼接布局</span><span class="en">10 collage layouts</span></div><div class="canvas"><div class="canvas-top"><span class="zh">画面预览</span><span class="en">Canvas preview</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div><div class="art" aria-hidden="true"><div class="scene one"></div><div class="scene two"></div><div class="scene three"></div></div><div class="canvas-bottom"><span>01 / 03 <span class="zh">帧</span><span class="en">frames</span></span><strong><span class="zh">为你而拼</span><span class="en">Made to connect</span> ✦</strong></div></div><div class="floating floating-b"><b aria-hidden="true">↗</b><span class="zh">预览 · 调整 · 导出</span><span class="en">Preview · Edit · Export</span></div><p class="visual-note"><span class="zh">* 画面为功能示意</span><span class="en">* Concept illustration, not an app screenshot</span></p></div>
+    </div></section>
+    <div class="ribbon" aria-label="Highlights"><div class="ribbon-inner wrap"><span><i aria-hidden="true">✳</i><span class="zh">多种拼图布局</span><span class="en">Flexible layouts</span></span><span><i aria-hidden="true">✳</i><span class="zh">Live Photo 创作</span><span class="en">Live Photo creation</span></span><span><i aria-hidden="true">✳</i><span class="zh">四图 / 九宫格拆图</span><span class="en">2×2 / 3×3 grids</span></span><span><i aria-hidden="true">✳</i><span class="zh">照片批量水印</span><span class="en">Batch watermarks</span></span></div></div>
+    <section class="section-space" id="features" aria-labelledby="features-title"><div class="wrap"><div class="section-top"><div><p class="kicker">CREATIVE TOOLKIT / 01</p><h2 id="features-title"><span class="zh">灵感来了，工具刚好在。</span><span class="en">A tool for every idea.</span></h2></div><p class="section-desc"><span class="zh">从一张照片到一段动态影像，把创作的每一步留在同一个地方。</span><span class="en">From a single photo to a moving moment, everything you need is right here.</span></p></div>
+      <div class="features">
+        <article class="feature"><span class="feature-icon" aria-hidden="true">▦</span><h3><span class="zh">自由拼接</span><span class="en">Creative collages</span></h3><p><span class="zh">横排、纵排、田字格、九宫格，还有大图聚焦与杂志拼贴。选择布局，组合你的画面。</span><span class="en">Choose from rows, columns, 2×2, 3×3, featured-image and magazine-inspired layouts to bring your photos together.</span></p></article>
+        <article class="feature"><span class="feature-icon" aria-hidden="true">⊞</span><h3><span class="zh">四图 / 九宫格拆图</span><span class="en">Grid splitter</span></h3><p><span class="zh">将一张照片拆为 2×2 或 3×3，调整裁切、缩放和旋转，再保存到相册。</span><span class="en">Split one photo into a 2×2 or 3×3 grid. Fine-tune crop, zoom and rotation before saving.</span></p></article>
+        <article class="feature"><span class="feature-icon" aria-hidden="true">↝</span><h3><span class="zh">视频 / GIF 转 Live Photo</span><span class="en">Video / GIF to Live Photo</span></h3><p><span class="zh">选取视频或 GIF，挑好封面与片段，把喜欢的瞬间变成可长按播放的 Live Photo。</span><span class="en">Pick a video or GIF, choose its cover and moment, and save it as a press-to-play Live Photo.</span></p></article>
+        <article class="feature"><span class="feature-icon" aria-hidden="true">▤</span><h3><span class="zh">Live Photo 串接</span><span class="en">Live Photo stitching</span></h3><p><span class="zh">让两张或更多 Live Photo 连成一段，记录不必在一次快门后结束。</span><span class="en">Join two or more Live Photos into one continuous moment. Let your story keep moving.</span></p></article>
+        <article class="feature"><span class="feature-icon" aria-hidden="true">✧</span><h3><span class="zh">批量水印</span><span class="en">Batch watermarks</span></h3><p><span class="zh">使用文字或 PNG / GIF 素材，为照片统一加上你的署名与风格。</span><span class="en">Add text or PNG / GIF watermarks to your photos for a consistent signature and style.</span></p></article>
+      </div>
+    </div></section>
+    <section class="spotlight" aria-labelledby="spotlight-title"><div class="spotlight-grid wrap"><div class="sample" aria-label="九宫格拆图示意 / Grid splitting concept"><div class="sample-grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="sample-tag"><span class="zh">一张照片，九种视角 ↗</span><span class="en">One photo, nine perspectives ↗</span></span></div><div class="spotlight-text"><p class="kicker">FRAME IT YOUR WAY</p><h2 id="spotlight-title"><span class="zh">不只是拼在一起，<br>而是拼得恰到好处。</span><span class="en">Not just together.<br>Thoughtfully composed.</span></h2><p><span class="zh">先预览，再微调，最后导出。无论是做一张静态拼图，还是为动态画面寻找新的组合方式，你都可以按自己的节奏创作。</span><span class="en">Preview first, refine the details, then export. Whether you're making a still collage or experimenting with moving images, create at your own pace.</span></p><a class="inline-link" href="#how-it-works"><span class="zh">看看创作流程</span><span class="en">Discover the workflow</span> <span aria-hidden="true">↗</span></a></div></div></section>
+    <section class="section-space" id="how-it-works" aria-labelledby="steps-title"><div class="wrap"><p class="kicker">SIMPLE BY DESIGN / 02</p><h2 id="steps-title"><span class="zh">三步，把灵感变成作品。</span><span class="en">From idea to finished frame.</span></h2><div class="steps"><article class="step"><span class="step-number">01</span><h3><span class="zh">选择玩法</span><span class="en">Pick your canvas</span></h3><p><span class="zh">拼接、拆图、转换、串接或水印，按想法进入对应工具。</span><span class="en">Choose a collage, grid, conversion, stitch or watermark tool to match your idea.</span></p></article><article class="step"><span class="step-number">02</span><h3><span class="zh">加入素材</span><span class="en">Add your media</span></h3><p><span class="zh">从相册选择照片、Live Photo、视频或 GIF，并预览与调整。</span><span class="en">Select photos, Live Photos, videos or GIFs from your library, then preview and refine.</span></p></article><article class="step"><span class="step-number">03</span><h3><span class="zh">保存作品</span><span class="en">Save your creation</span></h3><p><span class="zh">确认效果后导出到相册，让创作成为真正可以分享的画面。</span><span class="en">Export the finished result to Photos, ready to keep or share.</span></p></article></div></div></section>
+    <section class="end" aria-labelledby="end-title"><div class="wrap"><p class="kicker">ONE FRAME AT A TIME</p><h2 id="end-title"><span class="zh">下一段故事，从这一帧开始。</span><span class="en">Your next story starts with a frame.</span></h2><p><span class="zh">帧间，为照片与动态影像留出更多可能。部分高级功能可通过观看广告或升级 Pro 使用。</span><span class="en">Frame opens up new possibilities for photos and moving moments. Some advanced features require a rewarded ad or a Pro upgrade.</span></p><a class="button" href="#top"><span class="zh">回到顶部，继续探索</span><span class="en">Back to top</span> <span aria-hidden="true">↑</span></a></div></section>
+  </main>
+  <footer><div class="footer-inner wrap"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="zh">帧间</span><span class="en">Frame</span></a><span><span class="zh">把画面，留在你想要的位置。</span><span class="en">Every frame has a place.</span></span></div></footer>
+  <script>
+    const buttons = document.querySelectorAll('[data-switch]');
+    function setLanguage(language) {
+      const english = language === 'en';
+      document.documentElement.dataset.lang = english ? 'en' : 'zh';
+      document.documentElement.lang = english ? 'en' : 'zh-CN';
+      document.title = english ? 'Frame — Make Every Frame Part of the Story' : '帧间 — 让每一帧，拼出新故事';
+      document.querySelector('meta[name="description"]').content = english
+        ? 'Frame for iPhone and iPad: create photo and Live Photo collages, split grids, convert videos and GIFs, stitch Live Photos and add watermarks.'
+        : '帧间：在 iPhone 和 iPad 上拼接照片与 Live Photo，拆图、转换视频和 GIF、串接实况照片、添加水印。';
+      buttons.forEach(button => { button.setAttribute('aria-pressed', String(button.dataset.switch === (english ? 'en' : 'zh'))); });
+      try { localStorage.setItem('frame-language', english ? 'en' : 'zh'); } catch (_) {}
+    }
+    buttons.forEach(button => button.addEventListener('click', () => setLanguage(button.dataset.switch)));
+    try { if (localStorage.getItem('frame-language') === 'en') setLanguage('en'); } catch (_) {}
+  </script>
+</body>
+</html>
