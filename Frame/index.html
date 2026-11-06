@@ -22,9 +22,7 @@
     header { position:relative; z-index:5; border-bottom:1px solid rgba(35,78,66,.11); }
     .nav { min-height:82px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
     .brand { display:inline-flex; align-items:center; gap:12px; font-weight:750; letter-spacing:-.035em; font-size:21px; white-space:nowrap; }
-    .brand-mark { width:38px; height:38px; display:grid; grid-template-columns:repeat(2,1fr); gap:3px; padding:6px; border-radius:12px; background:var(--green); transform:rotate(-8deg); box-shadow:0 7px 14px #234e4229; }
-    .brand-mark i { display:block; background:#dff19a; border-radius:2px; }
-    .brand-mark i:nth-child(2) { background:#f0af79; }.brand-mark i:nth-child(3) { background:#a9d0c1; }.brand-mark i:nth-child(4) { background:#f5e9cb; }
+    .brand-mark { width:38px; height:38px; display:block; flex:none; object-fit:cover; border-radius:10px; box-shadow:0 7px 14px #234e4229; }
     .nav-links { display:flex; align-items:center; gap:29px; font-size:13px; font-weight:600; }
     .nav-links a { color:#4d5e56; transition:color .2s; }.nav-links a:hover { color:var(--green); }
     .lang-switch { display:flex; align-items:center; border:1px solid #cdd7ce; border-radius:100px; padding:3px; white-space:nowrap; background:#fff9; }
@@ -111,7 +109,7 @@
   <a class="skip" href="#main"><span class="zh">跳到正文</span><span class="en">Skip to content</span></a>
   <header>
     <nav class="nav wrap" aria-label="Main navigation">
-      <a href="#top" class="brand" aria-label="帧间 Frame — home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="zh">帧间</span><span class="en">Frame</span></a>
+      <a href="#top" class="brand" aria-label="帧间 Frame — home"><img class="brand-mark" src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/a5/b5/be/a5b5bea5-d87c-ed85-0eaf-52ec5b184b3f/Placeholder.mill/135x135bb.png" alt="" width="38" height="38"><span class="zh">帧间</span><span class="en">Frame</span></a>
       <div class="nav-links"><a href="#features"><span class="zh">功能一览</span><span class="en">Features</span></a><a href="#how-it-works"><span class="zh">使用方式</span><span class="en">How it works</span></a><div class="lang-switch" role="group" aria-label="Language / 语言"><button type="button" data-switch="zh" aria-pressed="true">中</button><button type="button" data-switch="en" aria-pressed="false">EN</button></div></div>
     </nav>
   </header>
@@ -140,7 +138,7 @@
     <section class="section-space" id="how-it-works" aria-labelledby="steps-title"><div class="wrap"><p class="kicker">SIMPLE BY DESIGN / 02</p><h2 id="steps-title"><span class="zh">三步，把灵感变成作品。</span><span class="en">From idea to finished frame.</span></h2><div class="steps"><article class="step"><span class="step-number">01</span><h3><span class="zh">选择玩法</span><span class="en">Pick your canvas</span></h3><p><span class="zh">拼接、拆图、转换、串接或水印，按想法进入对应工具。</span><span class="en">Choose a collage, grid, conversion, stitch or watermark tool to match your idea.</span></p></article><article class="step"><span class="step-number">02</span><h3><span class="zh">加入素材</span><span class="en">Add your media</span></h3><p><span class="zh">从相册选择照片、Live Photo、视频或 GIF，并预览与调整。</span><span class="en">Select photos, Live Photos, videos or GIFs from your library, then preview and refine.</span></p></article><article class="step"><span class="step-number">03</span><h3><span class="zh">保存作品</span><span class="en">Save your creation</span></h3><p><span class="zh">确认效果后导出到相册，让创作成为真正可以分享的画面。</span><span class="en">Export the finished result to Photos, ready to keep or share.</span></p></article></div></div></section>
     <section class="end" aria-labelledby="end-title"><div class="wrap"><p class="kicker">ONE FRAME AT A TIME</p><h2 id="end-title"><span class="zh">下一段故事，从这一帧开始。</span><span class="en">Your next story starts with a frame.</span></h2><p><span class="zh">帧间，为照片与动态影像留出更多可能。部分高级功能可通过观看广告或升级 Pro 使用。</span><span class="en">Frame opens up new possibilities for photos and moving moments. Some advanced features require a rewarded ad or a Pro upgrade.</span></p><a class="button" href="#top"><span class="zh">回到顶部，继续探索</span><span class="en">Back to top</span> <span aria-hidden="true">↑</span></a></div></section>
   </main>
-  <footer><div class="footer-inner wrap"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="zh">帧间</span><span class="en">Frame</span></a><span><span class="zh">把画面，留在你想要的位置。</span><span class="en">Every frame has a place.</span></span></div></footer>
+  <footer><div class="footer-inner wrap"><a class="brand" href="#top"><img class="brand-mark" src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/a5/b5/be/a5b5bea5-d87c-ed85-0eaf-52ec5b184b3f/Placeholder.mill/135x135bb.png" alt="" width="38" height="38" loading="lazy"><span class="zh">帧间</span><span class="en">Frame</span></a><span><span class="zh">把画面，留在你想要的位置。</span><span class="en">Every frame has a place.</span></span></div></footer>
   <script>
     const buttons = document.querySelectorAll('[data-switch]');
     function setLanguage(language) {
